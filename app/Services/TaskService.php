@@ -1,0 +1,144 @@
+<?php
+
+namespace App\Services;
+
+use App\Events\TaskCompleted;
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Support\Collection;
+
+class TaskService
+{
+    public function __construct(private WorkspaceService $workspaceService)
+    {
+    }
+
+    public function getTasksForProject(User $user, string $workspaceId, string $projectId, ?string $status = null, ?string $priority = null)
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        $query = $project->tasks();
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($priority) {
+            $query->where('priority', $priority);
+        }
+
+        return $query->orderBy('created_at', 'desc')
+            ->get([
+                'id',
+                'project_id',
+                'name',
+                'description',
+                'status',
+                'priority',
+                'created_at',
+                'updated_at',
+            ]);
+    }
+
+    public function createTask(User $user, string $workspaceId, string $projectId, array $data): Task
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        return Task::create([
+            'project_id' => $project->id,
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'status' => $data['status'] ?? 'pending',
+            'priority' => $data['priority'] ?? 'normal',
+        ]);
+    }
+
+    public function updateTask(User $user, string $workspaceId, string $projectId, string $taskId, array $data): Task
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        $task = $project->tasks()
+            ->whereKey($taskId)
+            ->firstOrFail();
+
+        $task->update([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'status' => $data['status'],
+            'priority' => $data['priority'],
+        ]);
+
+        if ($data['status'] === 'completed') {
+            event(new TaskCompleted($task));
+        }
+
+        return $task;
+    }
+
+    public function deleteTask(User $user, string $workspaceId, string $projectId, string $taskId): void
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        $task = $project->tasks()
+            ->whereKey($taskId)
+            ->firstOrFail();
+
+        $task->delete();
+    }
+
+    public function getAllTasksForUser(User $user, ?string $status = null, ?string $priority = null): Collection
+    {
+        $workspaceIds = $user->workspaces()->pluck('workspaces.id')->toArray();
+
+        $tasksQuery = Task::query()
+            ->with(['project.workspace'])
+            ->whereHas('project', function ($q) use ($workspaceIds) {
+                $q->whereIn('workspace_id', $workspaceIds);
+            });
+
+        if ($status) {
+            $tasksQuery->where('status', $status);
+        }
+
+        if ($priority) {
+            $tasksQuery->where('priority', $priority);
+        }
+
+        $tasks = $tasksQuery->orderByDesc('created_at')->get();
+
+        return $tasks->map(function (Task $task) {
+            return [
+                'id' => $task->id,
+                'name' => $task->name,
+                'status' => $task->status,
+                'priority' => $task->priority,
+                'project' => [
+                    'id' => $task->project->id,
+                    'name' => $task->project->name,
+                    'workspace' => [
+                        'id' => $task->project->workspace->id,
+                        'name' => $task->project->workspace->name,
+                    ],
+                ],
+                'created_at' => $task->created_at,
+                'updated_at' => $task->updated_at,
+            ];
+        });
+    }
+}
