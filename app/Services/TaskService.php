@@ -102,6 +102,19 @@ class TaskService
         $task->delete();
     }
 
+    public function getTaskForUser(User $user, string $workspaceId, string $projectId, string $taskId): Task
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        return $project->tasks()
+            ->whereKey($taskId)
+            ->firstOrFail();
+    }
+
     public function getAllTasksForUser(User $user, ?string $status = null, ?string $priority = null): Collection
     {
         $workspaceIds = $user->workspaces()->pluck('workspaces.id')->toArray();

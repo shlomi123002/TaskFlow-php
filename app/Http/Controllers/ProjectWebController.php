@@ -1,0 +1,69 @@
+<?php
+namespace App\Http\Controllers;
+
+use App\Models\Project;
+use App\Services\ProjectService;
+use App\Services\WorkspaceService;
+use Illuminate\Http\Request;
+
+class ProjectWebController extends Controller
+{
+    public function __construct(
+        private ProjectService $projectService,
+        private WorkspaceService $workspaceService
+    )
+    {
+    }
+
+    public function create(Request $request, string $workspaceId)
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        return view('projects.create', compact('workspace'));
+    }
+
+    public function store(Request $request, string $workspaceId)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:120'],
+        ]);
+
+        $this->projectService->createProject($request->user(), $workspaceId, $validated);
+
+        return redirect("/workspaces/{$workspaceId}")->with('success', 'Project created successfully!');
+    }
+
+    public function edit(Request $request, string $workspaceId, string $projectId)
+    {
+        $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        
+        return view('projects.edit', compact('project', 'workspace'));
+    }
+
+    public function update(Request $request, string $workspaceId, string $projectId)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:120'],
+        ]);
+
+        $this->projectService->updateProject($request->user(), $workspaceId, $projectId, $validated);
+
+        return redirect("/workspaces/{$workspaceId}")->with('success', 'Project updated successfully!');
+    }
+
+    public function destroy(Request $request, string $workspaceId, string $projectId)
+    {
+        $this->projectService->deleteProject($request->user(), $workspaceId, $projectId);
+
+        return redirect("/workspaces/{$workspaceId}")->with('success', 'Project deleted successfully!');
+    }
+
+    public function show(Request $request, string $workspaceId, string $projectId)
+    {
+        $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        $tasks = $project->tasks()->orderBy('created_at', 'desc')->get();
+        
+        return view('projects.show', compact('project', 'workspace', 'tasks'));
+    }
+}
