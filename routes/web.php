@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FrontendAuthController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WorkspaceWebController;
 use App\Http\Controllers\ProjectWebController;
@@ -24,8 +22,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/docs', [DocsController::class, 'index']);
-
 Route::get('/register', [FrontendAuthController::class, 'showRegister']);
 Route::post('/register', [FrontendAuthController::class, 'register']);
 
@@ -33,8 +29,6 @@ Route::get('/login', [FrontendAuthController::class, 'showLogin']);
 Route::post('/login', [FrontendAuthController::class, 'login']);
 
 Route::post('/logout', [FrontendAuthController::class, 'logout']);
-
-Route::get('/search', [SearchController::class, 'index']);
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
