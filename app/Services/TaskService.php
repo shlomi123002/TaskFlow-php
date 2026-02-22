@@ -52,36 +52,32 @@ class TaskService
             ->whereKey($projectId)
             ->firstOrFail();
 
-        return Task::create([
+        $task = Task::create([
             'project_id' => $project->id,
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'status' => $data['status'] ?? 'pending',
             'priority' => $data['priority'] ?? 'normal',
         ]);
+
+        // if caller created a task that is already completed dispatch the event
+        if ($task->status === 'completed') {
+            event(new TaskCompleted($task));
+        }
+
+        return $task;
     }
 
-    public function updateTask(User $user, string $workspaceId, string $projectId, string $taskId, array $data): Task
+    public function updateTask($user, int $taskId, array $data): Task
     {
-        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+        $task = Task::findOrFail($taskId);
 
-        $project = $workspace->projects()
-            ->whereKey($projectId)
-            ->firstOrFail();
+        $previousStatus = $task->status;
 
-        $task = $project->tasks()
-            ->whereKey($taskId)
-            ->firstOrFail();
+        $task->update($data);
 
-        $task->update([
-            'name' => $data['name'],
-            'description' => $data['description'] ?? null,
-            'status' => $data['status'],
-            'priority' => $data['priority'],
-        ]);
-
-        if ($data['status'] === 'completed') {
-            event(new TaskCompleted($task));
+        if ($previousStatus !== 'completed' && $task->status === 'completed') {
+            event(new TaskCompleted($task, $user));
         }
 
         return $task;

@@ -12,6 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // clean up soft deleted workspaces on a daily basis so the database doesn't
+        // retain trashed records longer than necessary. You can adjust or disable
+        // this schedule as needed in production.
+        $schedule->command('workspace:cleanup')->daily();
+
         // $schedule->command('inspire')->hourly();
     }
 

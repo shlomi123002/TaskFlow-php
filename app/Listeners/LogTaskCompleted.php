@@ -3,21 +3,20 @@
 namespace App\Listeners;
 
 use App\Events\TaskCompleted;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\DB;
+use App\Models\ActivityLog;
 
-
-class LogTaskCompleted
+class LogTaskCompletion
 {
     public function handle(TaskCompleted $event): void
     {
-        DB::table('activity_logs')->insert([
+        ActivityLog::create([
             'task_id' => $event->task->id,
-            'action' => 'completed',
-            'occurred_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'user_id' => $event->completedBy?->id,
+            'action' => 'task_completed',
+            'meta' => [
+                'task_title' => $event->task->title ?? null,
+            ],
+            'occurred_at' => $event->completedAt,
         ]);
     }
 }

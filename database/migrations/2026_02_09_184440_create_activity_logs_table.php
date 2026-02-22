@@ -6,24 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('task_id')->constrained()->cascadeOnDelete();
-            $table->string('action');
-            $table->timestamp('occurred_at');
-            $table->timestamps();
-        });
 
+            $table->id(); // id רגיל
+
+            $table->foreignId('task_id')->constrained()->cascadeOnDelete();
+
+            $table->uuid('user_id')->nullable();
+
+            $table->string('action'); // task_completed
+
+            $table->json('meta')->nullable();
+
+            $table->timestamp('occurred_at');
+
+            $table->timestamps();
+
+            $table->index('task_id');
+            $table->index('user_id');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('activity_logs');
