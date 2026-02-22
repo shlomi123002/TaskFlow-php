@@ -68,16 +68,44 @@ class TaskService
         return $task;
     }
 
-    public function updateTask($user, int $taskId, array $data): Task
+    public function updateTask(User $user, string $workspaceId, string $projectId, string $taskId, array $data): Task
     {
-        $task = Task::findOrFail($taskId);
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        $task = $project->tasks()
+            ->whereKey($taskId)
+            ->firstOrFail();
 
         $previousStatus = $task->status;
 
         $task->update($data);
 
         if ($previousStatus !== 'completed' && $task->status === 'completed') {
-            event(new TaskCompleted($task, $user));
+            event(new TaskCompleted($task));
+        }
+
+        return $task;
+    }
+
+    public function completeTask(User $user, string $workspaceId, string $projectId, string $taskId): Task
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
+
+        $project = $workspace->projects()
+            ->whereKey($projectId)
+            ->firstOrFail();
+
+        $task = $project->tasks()
+            ->whereKey($taskId)
+            ->firstOrFail();
+
+        if ($task->status !== 'completed') {
+            $task->update(['status' => 'completed']);
+            event(new TaskCompleted($task));
         }
 
         return $task;

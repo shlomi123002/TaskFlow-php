@@ -2,19 +2,23 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Task;
+use App\Models\User;
 
 
 class TaskCompleted
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public Task $task) {}
+    public ?User $completedBy;
+    public string $completedAt;
+
+    public function __construct(public Task $task, ?User $completedBy = null)
+    {
+        $this->completedBy = $completedBy;
+        $this->completedAt = now()->toDateTimeString();
+    }
 }

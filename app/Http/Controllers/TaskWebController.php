@@ -62,6 +62,13 @@ class TaskWebController extends Controller
         return redirect("/workspaces/{$workspaceId}/projects/{$projectId}")->with('success', 'Task updated successfully!');
     }
 
+    public function complete(Request $request, string $workspaceId, string $projectId, string $taskId)
+    {
+        $this->taskService->completeTask($request->user(), $workspaceId, $projectId, $taskId);
+
+        return redirect()->back()->with('success', 'Task marked as completed! 🎉');
+    }
+
     public function destroy(Request $request, string $workspaceId, string $projectId, string $taskId)
     {
         $this->taskService->deleteTask($request->user(), $workspaceId, $projectId, $taskId);

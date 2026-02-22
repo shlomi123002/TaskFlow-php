@@ -56,4 +56,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/edit', [TaskWebController::class, 'edit'])->name('tasks.edit');
     Route::put('/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}', [TaskWebController::class, 'update'])->name('tasks.update');
     Route::delete('/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}', [TaskWebController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/complete', [TaskWebController::class, 'complete'])->name('tasks.complete');
 });

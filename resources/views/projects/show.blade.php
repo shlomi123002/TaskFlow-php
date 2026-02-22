@@ -22,35 +22,61 @@
             </div>
         </div>
 
+        @if(session('success'))
+            <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #c3e6cb;">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="section">
             <h2 class="section-title">Tasks</h2>
             @if(count($tasks) > 0)
                 <div class="items-grid">
                     @foreach($tasks as $task)
-                        <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/edit" style="text-decoration: none; color: inherit;">
-                            <div class="item-card" style="cursor: pointer;">
-                                <h3>{{ $task->name }}</h3>
-                                
-                                @if($task->description)
-                                    <p>{{ Str::limit($task->description, 80) }}</p>
-                                @endif
-
-                                <div style="margin-top: 1rem;">
-                                    <span class="status-badge status-{{ $task->status ?? 'pending' }}">
-                                        {{ ucfirst($task->status ?? 'pending') }}
-                                    </span>
-                                    @if($task->priority)
-                                        <span class="status-badge priority-{{ $task->priority }}">
-                                            {{ ucfirst($task->priority) }}
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <div class="meta">
-                                    Created: {{ $task->created_at->format('M d, Y') }}
-                                </div>
+                        <div class="item-card" style="{{ $task->status === 'completed' ? 'opacity: 0.8;' : '' }}">
+                            <div style="margin-bottom: 0.5rem;">
+                                <h3 style="{{ $task->status === 'completed' ? 'text-decoration: line-through; color: #888;' : '' }}">{{ $task->name }}</h3>
                             </div>
-                        </a>
+
+                            @if($task->description)
+                                <p>{{ Str::limit($task->description, 80) }}</p>
+                            @endif
+
+                            <div style="margin-top: 1rem;">
+                                <span class="status-badge status-{{ $task->status ?? 'pending' }}">
+                                    {{ ucfirst($task->status ?? 'pending') }}
+                                </span>
+                                @if($task->priority)
+                                    <span class="status-badge priority-{{ $task->priority }}">
+                                        {{ ucfirst($task->priority) }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="meta" style="margin-top: 0.75rem;">
+                                Created: {{ $task->created_at->format('M d, Y') }}
+                            </div>
+
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center;">
+                                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/edit"
+                                   style="padding: 0.4rem 0.9rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                                    ✏️ Edit
+                                </a>
+                                @if($task->status !== 'completed')
+                                    <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/complete" style="display: inline;">
+                                        @csrf
+                                        <button type="submit"
+                                                style="padding: 0.4rem 0.9rem; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                            ✓ Mark Complete
+                                        </button>
+                                    </form>
+                                @else
+                                    <span style="padding: 0.4rem 0.9rem; background: #e9ecef; color: #6c757d; border-radius: 5px; font-size: 0.85rem; font-weight: 600;">
+                                        ✓ Completed
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             @else
