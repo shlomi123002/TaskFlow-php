@@ -49,10 +49,18 @@ class HomeController extends Controller
             });
         }
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'workspaces' => $workspaces,
+                'projects' => $projects,
+                'tasks' => $tasks,
+            ]);
+        }
+
         return view('home', [
-            'workspaces' => $workspaces,
-            'projects' => $projects,
-            'tasks' => $tasks,
+            'workspaces' => [],
+            'projects' => [],
+            'tasks' => [],
         ]);
     }
 }

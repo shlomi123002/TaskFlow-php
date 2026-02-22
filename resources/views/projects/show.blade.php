@@ -60,61 +60,135 @@
 
         <div class="section">
             <h2 class="section-title">Tasks</h2>
-            @if(count($tasks) > 0)
-                <div class="items-grid">
-                    @foreach($tasks as $task)
-                        <div class="item-card" style="{{ $task->status === 'completed' ? 'opacity: 0.8;' : '' }}">
+            
+            <div id="loading-tasks" style="text-align: center; padding: 2rem;">
+                <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                <p style="color: #6c757d;">Loading tasks...</p>
+            </div>
+            
+            <div id="tasks-container" class="items-grid" style="display: none;"></div>
+            
+            <div id="tasks-empty" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">✓</div>
+                <p>No tasks in this project. <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/create" style="color: #667eea; text-decoration: none;">Create one</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const statusParams = urlParams.has('status') ? 'status=' + encodeURIComponent(urlParams.get('status')) : '';
+            const priorityParams = urlParams.has('priority') ? 'priority=' + encodeURIComponent(urlParams.get('priority')) : '';
+            
+            let queryParams = [];
+            if (statusParams) queryParams.push(statusParams);
+            if (priorityParams) queryParams.push(priorityParams);
+            let queryString = queryParams.length > 0 ? '?' + queryParams.join('&') : '';
+            
+            fetch('/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}' + queryString, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                const formatDate = (dateString) => {
+                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
+                };
+
+                const tasksContainer = document.getElementById('tasks-container');
+                const loadingTasks = document.getElementById('loading-tasks');
+                const tasksEmpty = document.getElementById('tasks-empty');
+                
+                loadingTasks.style.display = 'none';
+                
+                if (data.tasks && data.tasks.length > 0) {
+                    tasksContainer.style.display = 'grid';
+                    tasksContainer.innerHTML = data.tasks.map(task => {
+                        const isCompleted = task.status === 'completed';
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+                        
+                        let actionsHtml = '';
+                        if (!isCompleted) {
+                            actionsHtml = `
+                                <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/${task.id}/complete" style="display: inline;">
+                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                    <button type="submit"
+                                            style="padding: 0.4rem 0.9rem; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                        ✓ Mark Complete
+                                    </button>
+                                </form>
+                            `;
+                        } else {
+                            actionsHtml = `
+                                <span style="padding: 0.4rem 0.9rem; background: #e9ecef; color: #6c757d; border-radius: 5px; font-size: 0.85rem; font-weight: 600;">
+                                    ✓ Completed
+                                </span>
+                            `;
+                        }
+
+                        let priorityBadge = '';
+                        if (task.priority) {
+                            priorityBadge = `<span class="status-badge priority-${task.priority}">
+                                ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                            </span>`;
+                        }
+                        
+                        let descriptionHtml = '';
+                        if (task.description) {
+                            descriptionHtml = `<p>${task.description.length > 80 ? task.description.substring(0, 80) + '...' : task.description}</p>`;
+                        }
+                        
+                        return `
+                        <div class="item-card" style="${isCompleted ? 'opacity: 0.8;' : ''}">
                             <div style="margin-bottom: 0.5rem;">
-                                <h3 style="{{ $task->status === 'completed' ? 'text-decoration: line-through; color: #888;' : '' }}">{{ $task->name }}</h3>
+                                <h3 style="${isCompleted ? 'text-decoration: line-through; color: #888;' : ''}">${task.name}</h3>
                             </div>
 
-                            @if($task->description)
-                                <p>{{ Str::limit($task->description, 80) }}</p>
-                            @endif
+                            ${descriptionHtml}
 
                             <div style="margin-top: 1rem;">
-                                <span class="status-badge status-{{ $task->status ?? 'pending' }}">
-                                    {{ ucfirst($task->status ?? 'pending') }}
+                                <span class="status-badge status-${task.status || 'pending'}">
+                                    ${(task.status || 'pending').charAt(0).toUpperCase() + (task.status || 'pending').slice(1)}
                                 </span>
-                                @if($task->priority)
-                                    <span class="status-badge priority-{{ $task->priority }}">
-                                        {{ ucfirst($task->priority) }}
-                                    </span>
-                                @endif
+                                ${priorityBadge}
                             </div>
 
                             <div class="meta" style="margin-top: 0.75rem;">
-                                Created: {{ $task->created_at->format('M d, Y') }}
+                                Created: ${formatDate(task.created_at)}
                             </div>
 
                             <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center;">
-                                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/edit"
+                                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/${task.id}/edit"
                                    style="padding: 0.4rem 0.9rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
                                     ✏️ Edit
                                 </a>
-                                @if($task->status !== 'completed')
-                                    <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/complete" style="display: inline;">
-                                        @csrf
-                                        <button type="submit"
-                                                style="padding: 0.4rem 0.9rem; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                            ✓ Mark Complete
-                                        </button>
-                                    </form>
-                                @else
-                                    <span style="padding: 0.4rem 0.9rem; background: #e9ecef; color: #6c757d; border-radius: 5px; font-size: 0.85rem; font-weight: 600;">
-                                        ✓ Completed
-                                    </span>
-                                @endif
+                                ${actionsHtml}
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="empty-state">
-                    <div class="empty-state-icon">✓</div>
-                    <p>No tasks in this project. <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/create" style="color: #667eea; text-decoration: none;">Create one</a></p>
-                </div>
-            @endif
-        </div>
-    </div>
+                        `;
+                    }).join('');
+                } else {
+                    tasksEmpty.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                document.getElementById('loading-tasks').innerHTML = '<p style="color: red;">Failed to load data.</p>';
+            });
+        });
+    </script>
 @endsection

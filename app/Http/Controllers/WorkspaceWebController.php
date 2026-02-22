@@ -59,9 +59,20 @@ class WorkspaceWebController extends Controller
 
     public function show(Request $request, string $workspaceId)
     {
+
         $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
-        $projects = $workspace->projects()->with('tasks')->get();
         
-        return view('workspaces.show', compact('workspace', 'projects'));
+        if ($request->wantsJson()) {
+            $projects = $workspace->projects()->with('tasks')->get();
+            return response()->json([
+                'workspace' => $workspace,
+                'projects' => $projects,
+            ]);
+        }
+
+        return view('workspaces.show', [
+            'workspace' => $workspace,
+            'projects' => []
+        ]);
     }
 }

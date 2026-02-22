@@ -67,8 +67,21 @@ class ProjectWebController extends Controller
         $status = $request->query('status');
         $priority = $request->query('priority');
 
-        $tasks = $this->taskService->getTasksForProject($request->user(), $workspaceId, $projectId, $status, $priority);
+        if ($request->wantsJson()) {
+            $tasks = $this->taskService->getTasksForProject($request->user(), $workspaceId, $projectId, $status, $priority);
+            return response()->json([
+                'project' => $project,
+                'workspace' => $workspace,
+                'tasks' => $tasks,
+            ]);
+        }
         
-        return view('projects.show', compact('project', 'workspace', 'tasks', 'status', 'priority'));
+        return view('projects.show', [
+            'project' => $project,
+            'workspace' => $workspace,
+            'status' => $status,
+            'priority' => $priority,
+            'tasks' => []
+        ]);
     }
 }
