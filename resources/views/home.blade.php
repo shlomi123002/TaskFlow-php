@@ -21,11 +21,13 @@
             </div>
         </div>
 
-        <!-- Workspaces Section -->
         <div class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                 <h2 class="section-title" style="border: none; padding: 0; margin: 0;">Workspaces</h2>
-                <a href="/workspaces/create" class="btn btn-primary" style="text-decoration: none; display: inline-block; padding: 0.6rem 1.5rem;">+ New Workspace</a>
+                <a href="/workspaces/create" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; margin-top: 0; width: auto;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Workspace
+                </a>
             </div>
             
             <div id="loading-workspaces" style="text-align: center; padding: 2rem;">
