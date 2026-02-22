@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}">
+        <form id="update-form" method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}">
             @csrf
             @method('PUT')
 
@@ -87,26 +87,27 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                <button type="submit" class="btn btn-primary" style="flex: 1;">Update Task</button>
-                @if($task->status !== 'completed')
-                    <button type="button"
-                            onclick="document.getElementById('complete-form').submit()"
-                            style="flex: 1; padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                        ✓ Mark as Complete
-                    </button>
-                @else
-                    <span style="flex: 1; padding: 0.75rem 1.5rem; background: #d4edda; color: #155724; border-radius: 5px; font-weight: 600; font-size: 1rem; text-align: center;">
-                        ✓ Already Completed
-                    </span>
-                @endif
-                <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}" style="flex: 1;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; font-weight: 600; cursor: pointer;" onclick="return confirm('Are you sure you want to delete this task?');">Delete Task</button>
-                </form>
-            </div>
         </form>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <button type="submit" form="update-form" class="btn btn-primary" style="flex: 1;">Update Task</button>
+            @if($task->status !== 'completed')
+                <button type="button"
+                        onclick="document.getElementById('complete-form').submit()"
+                        style="flex: 1; padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    ✓ Mark as Complete
+                </button>
+            @else
+                <span style="flex: 1; padding: 0.75rem 1.5rem; background: #d4edda; color: #155724; border-radius: 5px; font-weight: 600; font-size: 1rem; text-align: center;">
+                    ✓ Already Completed
+                </span>
+            @endif
+            <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}" style="flex: 1;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; font-weight: 600; cursor: pointer;" onclick="return confirm('Are you sure you want to delete this task?');">Delete Task</button>
+            </form>
+        </div>
 
         @if($task->status !== 'completed')
             <form id="complete-form" method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/{{ $task->id }}/complete" style="display: none;">
