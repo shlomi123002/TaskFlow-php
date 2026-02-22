@@ -10,7 +10,8 @@ class ProjectWebController extends Controller
 {
     public function __construct(
         private ProjectService $projectService,
-        private WorkspaceService $workspaceService
+        private WorkspaceService $workspaceService,
+        private \App\Services\TaskService $taskService
     )
     {
     }
@@ -62,8 +63,12 @@ class ProjectWebController extends Controller
     {
         $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);
         $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
-        $tasks = $project->tasks()->orderBy('created_at', 'desc')->get();
         
-        return view('projects.show', compact('project', 'workspace', 'tasks'));
+        $status = $request->query('status');
+        $priority = $request->query('priority');
+
+        $tasks = $this->taskService->getTasksForProject($request->user(), $workspaceId, $projectId, $status, $priority);
+        
+        return view('projects.show', compact('project', 'workspace', 'tasks', 'status', 'priority'));
     }
 }

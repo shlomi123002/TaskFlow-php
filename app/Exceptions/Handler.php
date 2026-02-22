@@ -41,40 +41,10 @@ class Handler extends ExceptionHandler
         });
     }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * This method returns a consistent JSON structure for API requests:
-     * {
-     *   "error": "Message",
-     *   "code": 404,
-     *   // optional: "errors": { field: [messages] } for validation
-     *   // optional: "exception": { debug info } when APP_DEBUG=true
-     * }
-     */
     public function render($request, Throwable $exception)
     {
-        // If the request expects JSON (API call), return standardized JSON responses.
-        if ($this->isApiRequest($request)) {
-            return $this->apiExceptionResponse($request, $exception);
-        }
-
-        // Fallback to the default HTML / web rendering.
-        return parent::render($request, $exception);
-    }
-
-    /**
-     * Decide if this request should receive JSON responses.
-     */
-    protected function isApiRequest(Request $request): bool
-    {
-        // Consider it an API request if:
-        // - The request explicitly expects JSON, OR
-        // - The Accept header prefers JSON, OR
-        // - The path starts with "api/"
-        return $request->expectsJson()
-            || $request->wantsJson()
-            || str_starts_with($request->path(), 'api/');
+        // Return structured JSON error for ALL exceptions across the project
+        return $this->apiExceptionResponse($request, $exception);
     }
 
     /**

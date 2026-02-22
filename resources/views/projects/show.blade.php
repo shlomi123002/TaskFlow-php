@@ -28,6 +28,36 @@
             </div>
         @endif
 
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #e9ecef;">
+            <form method="GET" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 150px;">
+                    <label for="status" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Status Filter</label>
+                    <select name="status" id="status" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                    </select>
+                </div>
+                
+                <div style="flex: 1; min-width: 150px;">
+                    <label for="priority" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Priority Filter</label>
+                    <select name="priority" id="priority" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+                        <option value="">All Priorities</option>
+                        <option value="low" {{ request('priority') === 'low' ? 'selected' : '' }}>Low</option>
+                        <option value="normal" {{ request('priority') === 'normal' ? 'selected' : '' }}>Normal</option>
+                        <option value="high" {{ request('priority') === 'high' ? 'selected' : '' }}>High</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">Apply Filters</button>
+                    @if(request()->has('status') || request()->has('priority'))
+                        <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}" class="btn btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">Clear</a>
+                    @endif
+                </div>
+            </form>
+        </div>
+
         <div class="section">
             <h2 class="section-title">Tasks</h2>
             @if(count($tasks) > 0)
