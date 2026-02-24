@@ -17,6 +17,44 @@ class TaskWebController extends Controller
     {
     }
 
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $search = $request->query('search');
+        $status = $request->query('status');
+        $priority = $request->query('priority');
+
+        $tasksQuery = Task::whereIn('project_id', \App\Models\Project::whereIn('workspace_id', $user->workspaces()->pluck('id'))->pluck('id'))
+            ->with('project', 'project.workspace');
+
+        if ($status) {
+            $tasksQuery->where('status', $status);
+        }
+
+        if ($priority) {
+            $tasksQuery->where('priority', $priority);
+        }
+
+        $tasks = $tasksQuery->orderBy('created_at', 'desc')->get();
+
+        if ($search) {
+            $search = strtolower($search);
+            $tasks = $tasks->filter(function ($task) use ($search) {
+                return stripos($task->name, $search) !== false || 
+                       stripos($task->description ?? '', $search) !== false;
+            });
+            $tasks = $tasks->values();
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'tasks' => $tasks,
+            ]);
+        }
+
+        return view('tasks.index');
+    }
+
     public function create(Request $request, string $workspaceId, string $projectId)
     {
         $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);

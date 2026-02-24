@@ -33,6 +33,7 @@ Route::post('/logout', [FrontendAuthController::class, 'logout']);
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/tasks', [TaskWebController::class, 'index'])->name('tasks.index');
     
     // Workspace CRUD
     Route::get('/workspaces/create', [WorkspaceWebController::class, 'create'])->name('workspaces.create');

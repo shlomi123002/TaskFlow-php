@@ -1,34 +1,15 @@
 @extends('layout')
 
-@section('title', $project->name . ' - TaskFlow')
+@section('title', 'All Tasks - TaskFlow')
 
 @section('content')
     <div class="container container-large">
-        <a href="/workspaces/{{ $workspace->id }}" style="margin-bottom: 2rem; display: inline-block; color: #667eea; text-decoration: none;">← Back to Workspace</a>
-
-        <div>
-            <p style="color: #666; margin-bottom: 0.5rem;">{{ $workspace->name }}</p>
-            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                <h1 style="margin: 0; padding: 0;">{{ $project->name }}</h1>
-                
-                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/edit" class="btn btn-secondary" style="text-decoration: none; display: inline-block; background: #667eea; color: white;">Edit</a>
-                
-                <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}" style="display: inline; margin: 0;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-secondary" style="background: #dc3545; color: white; cursor: pointer; border: none; padding: 0.75rem 1.5rem;" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
-                </form>
-            </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1>All Tasks</h1>
         </div>
 
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #c3e6cb;">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #e9ecef;">
-            <form method="GET" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+            <form method="GET" action="/tasks" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
                 
                 <div style="flex: 2; min-width: 200px;">
                     <label for="search" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Search Task</label>
@@ -36,7 +17,7 @@
                         type="search" 
                         name="search" 
                         id="search"
-                        placeholder="Search tasks..." 
+                        placeholder="Search all tasks..." 
                         value="{{ request('search') }}"
                         class="form-control"
                         style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;"
@@ -64,20 +45,14 @@
                 <div style="display: flex; gap: 0.5rem;">
                     <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">Apply Filters</button>
                     @if(request()->has('status') || request()->has('priority') || request()->has('search'))
-                        <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}" class="btn btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">Clear</a>
+                        <a href="/tasks" class="btn btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none;">Clear</a>
                     @endif
                 </div>
             </form>
         </div>
 
         <div class="section">
-            <div style="display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                <h2 class="section-title" style="border: none; padding: 0; margin: 0;">Tasks</h2>
-                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/create" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; margin-top: 0; width: auto; font-size: 0.9rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    New Task
-                </a>
-            </div>
+            <h2 class="section-title">Your Tasks</h2>
             
             <div id="loading-tasks" style="text-align: center; padding: 2rem;">
                 <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
@@ -88,7 +63,7 @@
             
             <div id="tasks-empty" class="empty-state" style="display: none;">
                 <div class="empty-state-icon">✓</div>
-                <p>No tasks in this project. <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/create" style="color: #667eea; text-decoration: none;">Create one</a></p>
+                <p>No tasks found. Go to a project to create one!</p>
             </div>
         </div>
     </div>
@@ -113,7 +88,7 @@
             if (searchParams) queryParams.push(searchParams);
             let queryString = queryParams.length > 0 ? '?' + queryParams.join('&') : '';
             
-            fetch('/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}' + queryString, {
+            fetch('/tasks' + queryString, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -139,12 +114,14 @@
                     tasksContainer.style.display = 'grid';
                     tasksContainer.innerHTML = data.tasks.map(task => {
                         const isCompleted = task.status === 'completed';
+                        const wId = task.project && task.project.workspace ? task.project.workspace.id : '';
+                        const pId = task.project ? task.project.id : '';
                         const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
                         
                         let actionsHtml = '';
                         if (!isCompleted) {
                             actionsHtml = `
-                                <form method="POST" action="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/${task.id}/complete" style="display: inline;">
+                                <form method="POST" action="/workspaces/${wId}/projects/${pId}/tasks/${task.id}/complete" style="display: inline;">
                                     <input type="hidden" name="_token" value="${csrfToken}">
                                     <button type="submit"
                                             style="padding: 0.4rem 0.9rem; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
@@ -163,22 +140,15 @@
                         let priorityBadge = '';
                         if (task.priority) {
                             priorityBadge = `<span class="status-badge priority-${task.priority}">
-                                ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
                             </span>`;
                         }
                         
-                        let descriptionHtml = '';
-                        if (task.description) {
-                            descriptionHtml = `<p>${task.description.length > 80 ? task.description.substring(0, 80) + '...' : task.description}</p>`;
-                        }
-                        
                         return `
-                        <div class="item-card" style="${isCompleted ? 'opacity: 0.8;' : ''}">
-                            <div style="margin-bottom: 0.5rem;">
-                                <h3 style="${isCompleted ? 'text-decoration: line-through; color: #888;' : ''}">${task.name}</h3>
+                        <div class="item-card" style="${isCompleted ? 'opacity: 0.75;' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <h3 style="flex: 1; ${isCompleted ? 'text-decoration: line-through; color: #888;' : ''}">${task.name}</h3>
                             </div>
-
-                            ${descriptionHtml}
 
                             <div style="margin-top: 1rem;">
                                 <span class="status-badge status-${task.status || 'pending'}">
@@ -188,11 +158,13 @@
                             </div>
 
                             <div class="meta" style="margin-top: 0.75rem;">
+                                Workspace: <em>${task.project && task.project.workspace ? task.project.workspace.name : ''}</em><br>
+                                Project: <em>${task.project ? task.project.name : ''}</em><br>
                                 Created: ${formatDate(task.created_at)}
                             </div>
 
-                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; align-items: center;">
-                                <a href="/workspaces/{{ $workspace->id }}/projects/{{ $project->id }}/tasks/${task.id}/edit"
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <a href="/workspaces/${wId}/projects/${pId}/tasks/${task.id}/edit"
                                    style="padding: 0.4rem 0.9rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
                                     ✏️ Edit
                                 </a>

@@ -13,7 +13,7 @@
                         <input 
                             type="search" 
                             name="search" 
-                            placeholder="Search workspaces, projects, or tasks..." 
+                            placeholder="Search workspace" 
                             value="{{ request('search') }}"
                         >
                     </form>
@@ -41,35 +41,7 @@
             </div>
         </div>
 
-        <!-- Projects Section -->
-        <div class="section">
-            <h2 class="section-title">Projects</h2>
-            
-            <div id="loading-projects" style="text-align: center; padding: 2rem;">
-                <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
-                <p style="color: #6c757d;">Loading projects...</p>
-            </div>
-            <div id="projects-container" class="items-grid" style="display: none;"></div>
-            <div id="projects-empty" class="empty-state" style="display: none;">
-                <div class="empty-state-icon">📊</div>
-                <p>No projects found. Create one in a workspace to get started!</p>
-            </div>
-        </div>
 
-        <!-- Tasks Section -->
-        <div class="section">
-            <h2 class="section-title">Tasks</h2>
-            
-            <div id="loading-tasks" style="text-align: center; padding: 2rem;">
-                <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
-                <p style="color: #6c757d;">Loading tasks...</p>
-            </div>
-            <div id="tasks-container" class="items-grid" style="display: none;"></div>
-            <div id="tasks-empty" class="empty-state" style="display: none;">
-                <div class="empty-state-icon">✓</div>
-                <p>No tasks found. Create one in a project to get started!</p>
-            </div>
-        </div>
     </div>
     
     <style>
@@ -128,111 +100,11 @@
                     workspacesEmpty.style.display = 'block';
                 }
 
-                // Render Projects
-                const projectsContainer = document.getElementById('projects-container');
-                const loadingProjects = document.getElementById('loading-projects');
-                const projectsEmpty = document.getElementById('projects-empty');
-                
-                loadingProjects.style.display = 'none';
-                
-                if (data.projects && data.projects.length > 0) {
-                    projectsContainer.style.display = 'grid';
-                    projectsContainer.innerHTML = data.projects.map(project => `
-                        <a href="/workspaces/${project.workspace_id}/projects/${project.id}" style="text-decoration: none; color: inherit;">
-                            <div class="item-card" style="cursor: pointer;">
-                                <h3>${project.name}</h3>
-                                <p style="margin-bottom: 1rem;">
-                                    <strong>${project.tasks ? project.tasks.length : 0}</strong> Task(s)
-                                </p>
-                                <div class="meta">
-                                    Workspace: <em>${project.workspace ? project.workspace.name : ''}</em><br>
-                                    Created: ${formatDate(project.created_at)}
-                                </div>
-                            </div>
-                        </a>
-                    `).join('');
-                } else {
-                    projectsEmpty.style.display = 'block';
-                }
 
-                // Render Tasks
-                const tasksContainer = document.getElementById('tasks-container');
-                const loadingTasks = document.getElementById('loading-tasks');
-                const tasksEmpty = document.getElementById('tasks-empty');
-                
-                loadingTasks.style.display = 'none';
-                
-                if (data.tasks && data.tasks.length > 0) {
-                    tasksContainer.style.display = 'grid';
-                    tasksContainer.innerHTML = data.tasks.map(task => {
-                        const isCompleted = task.status === 'completed';
-                        const wId = task.project && task.project.workspace ? task.project.workspace.id : '';
-                        const pId = task.project ? task.project.id : '';
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
-                        
-                        let actionsHtml = '';
-                        if (!isCompleted) {
-                            actionsHtml = `
-                                <form method="POST" action="/workspaces/${wId}/projects/${pId}/tasks/${task.id}/complete" style="display: inline;">
-                                    <input type="hidden" name="_token" value="${csrfToken}">
-                                    <button type="submit"
-                                            style="padding: 0.4rem 0.9rem; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                        ✓ Mark Complete
-                                    </button>
-                                </form>
-                            `;
-                        } else {
-                            actionsHtml = `
-                                <span style="padding: 0.4rem 0.9rem; background: #e9ecef; color: #6c757d; border-radius: 5px; font-size: 0.85rem; font-weight: 600;">
-                                    ✓ Completed
-                                </span>
-                            `;
-                        }
-
-                        let priorityBadge = '';
-                        if (task.priority) {
-                            priorityBadge = `<span class="status-badge priority-${task.priority}">
-                                ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
-                            </span>`;
-                        }
-                        
-                        return `
-                        <div class="item-card" style="${isCompleted ? 'opacity: 0.75;' : ''}">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-                                <h3 style="flex: 1; ${isCompleted ? 'text-decoration: line-through; color: #888;' : ''}">${task.name}</h3>
-                            </div>
-
-                            <div style="margin-top: 1rem;">
-                                <span class="status-badge status-${task.status || 'pending'}">
-                                    ${(task.status || 'pending').charAt(0).toUpperCase() + (task.status || 'pending').slice(1)}
-                                </span>
-                                ${priorityBadge}
-                            </div>
-
-                            <div class="meta" style="margin-top: 0.75rem;">
-                                Project: <em>${task.project ? task.project.name : ''}</em><br>
-                                Created: ${formatDate(task.created_at)}
-                            </div>
-
-                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                                <a href="/workspaces/${wId}/projects/${pId}/tasks/${task.id}/edit"
-                                   style="padding: 0.4rem 0.9rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
-                                    ✏️ Edit
-                                </a>
-                                ${actionsHtml}
-                            </div>
-                        </div>
-                        `;
-                    }).join('');
-                } else {
-                    tasksEmpty.style.display = 'block';
-                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
                 document.getElementById('loading-workspaces').innerHTML = '<p style="color: red;">Failed to load data.</p>';
-                document.getElementById('loading-projects').innerHTML = '<p style="color: red;">Failed to load data.</p>';
-                document.getElementById('loading-tasks').innerHTML = '<p style="color: red;">Failed to load data.</p>';
             });
         });
     </script>

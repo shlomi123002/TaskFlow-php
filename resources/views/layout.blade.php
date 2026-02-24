@@ -336,7 +336,10 @@
         <nav class="navbar">
             <div style="display: flex; align-items: center; gap: 2rem;">
                 <a href="/" class="brand">TaskFlow</a>
-                <a href="/home" style="color: #4a5568; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: color 0.3s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#4a5568'">Dashboard</a>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/home" style="color: #4a5568; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: color 0.3s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#4a5568'">Dashboard</a>
+                    <a href="/tasks" style="color: #4a5568; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: color 0.3s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#4a5568'">All Tasks</a>
+                </div>
             </div>
             <div class="nav-links">
                 <span>Welcome, {{ auth()->user()->name }}</span>
