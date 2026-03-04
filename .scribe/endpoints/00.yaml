@@ -202,7 +202,8 @@ endpoints:
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
-          access-control-allow-origin: '*'
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6IkZMdjMvUkxNOXJWT2FLTjJJbCtNWGc9PSIsInZhbHVlIjoiTEE1NGMxK1FtNFpITi8wdysva09ZWHlDRHkvU0Y0QzVjRzl1MGVrMTVxNDRuUGp2anMxTzE1Tjh5dGJ2SU10UEc3eVcvNFRsZjVZa3FqeXI4R1AvbVlNa253aWw2bmQrczFubDZWT0NlWjVSVDIzTlo0ditNcE96bUtPT3ZIVEgiLCJtYWMiOiJmYTUwNjA0ZDJmYTBjNGIzMmMzZTk5YTg2NTIyM2U0MzI0YjVkMGRmMmRhM2NkMmVjMzQ4MDgzNzJjZDZlZjU5IiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:57 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
         description: null
     responseFields: []
     auth:
@@ -417,7 +418,53 @@ endpoints:
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
-          access-control-allow-origin: '*'
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6IllnMzRoT1dIa2YzYVEwb2pHTmpyb3c9PSIsInZhbHVlIjoiM2hzRmtSckZsbjAycGh3cnlZazZWK1FNc0hVZHdmVkNlakFlYmZsSHVtZmZGU3M4REpZRU8zVmNlMDE2VnhaZEZ0TTBsOWFNUWUxTWU5dWIxWGtvSmh3WFIvZ3hzdS9CNlZJSFdwN2s2ald5TkNzcm5sOEJuazhXR216L0Vjc0wiLCJtYWMiOiIwOTJiMDk0MGE4MjEzNzdkZWYxYmE0MDlkZmM1ZmY0NDE5NjhkMDFiMWEzOGZmYzcyYWViMGQ1ZTRiZmE3MmU0IiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:57 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/projects
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer Bearer {YOUR_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"error":"Unauthenticated","code":401}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6IjBnejFxQWNIVUtmTFRMc05YVDNwUGc9PSIsInZhbHVlIjoiZlBqY3d1SVVqSlJSY2hPRmJZR2FodDVDZ2pQckhsM0lHenBnWklRc0JZc2pRVC9SRG9mMDE0Z2tYSURFQ0pBVjcvc29odkNPdzVtRmNoQlIybzZZejYrbG9vQWpacSsxNjZUSzJBcENpSXo1Z2tZWDZCazRhM1o2WWxRTkFYa2siLCJtYWMiOiIzMThkMzI4ODgyYzkyYjFjYzFlN2IzZmQ0ZDg2N2UwNDJjOWJlYTc3MzMyNTM0MmVkNGFmZGMxNWExYWMyM2E3IiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:57 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
         description: null
     responseFields: []
     auth:
@@ -674,7 +721,8 @@ endpoints:
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
-          access-control-allow-origin: '*'
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6Im5KSk5kK05ubUNhdHBEc3Z6ai9qNVE9PSIsInZhbHVlIjoiYXMvT2hlT1hoV1pQWjBBUXhDMFBOdnQ3TjZuOGN6ZERCUHAxSWtjWUxaV3F4eURRRXJUQmd6V3c5VUsvbWF4enBZNlVHZ2tMRWFxTnN6WmNiWGVnQlN5WDlibktoOHZZSUpRUmFxYTdNN1ZoZFZ2a0hVZ1l2ZWdnRm1VaWJHaTciLCJtYWMiOiJhMTM1MmVhZjcyNGEyYTRmOWQwY2VhZDE4NGZjODNiYzM2Yjc1ZGI0Y2NlMTI2ZTQwODFlNmNlM2MxNTJmOTRjIiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:58 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
         description: null
     responseFields: []
     auth:
@@ -747,7 +795,8 @@ endpoints:
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
-          access-control-allow-origin: '*'
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6IkVUYVNNT1RJMXdLSDA4TnNOT21nSkE9PSIsInZhbHVlIjoiaWxOb0FDRlJrL3pCeVNMQWdGeHYrTlB6OGZVWlYxM2ZTZFdzTEZRdk5hVjlqMGpUY2NyVXlqK29TaWRFN25lZVkwK1RtVjU0NHJpMnBycFcvRmN1M0dnMHRncXp0dS8xMmpLcWZ4dm5ERXhpQ1pHSDE2QWh4eEVIczIvSU9GMTQiLCJtYWMiOiI1Y2ZlMGQ2OWQ0NGQ3Y2Y4N2NjOWRkY2M2YzFhZDVjZDc0MDhiNWQ2MmY1OTZhYTAyMDhiYWIzNTcwNDE3NjAzIiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:58 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
         description: null
     responseFields: []
     auth:
@@ -1050,6 +1099,348 @@ endpoints:
       workspaceId: consequatur
       projectId: consequatur
       taskId: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List comments for a task.'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer Bearer {YOUR_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      workspaceId:
+        custom: []
+        name: workspaceId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      projectId:
+        custom: []
+        name: projectId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      taskId:
+        custom: []
+        name: taskId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      workspaceId: consequatur
+      projectId: consequatur
+      taskId: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"error":"Unauthenticated","code":401}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+          set-cookie: 'laravel_session=eyJpdiI6ImI2akNaeko5WEhLRHE4M1hsSzVxbGc9PSIsInZhbHVlIjoiZDlYSVlvVmc4WkhXVFBkNmd4eDl1eStUd3lraFdJOTA4WXFyWVVSbnB1NkV1VldkajJyQVRrZWV4N0l5bkFIZnpva3l6aEhMUy9RNncva3pNYi9qT3NpM1Y2alNMcHZpcGxhUGpYREptTStza0FaMWs3OWZJUU5OT1E3dWxraXgiLCJtYWMiOiI4ZjcyZWUyYWMzODdmODc1MDJiYTQzZmVjYjJkMzFlYzVkYzZlNTViNDBjODkwM2E0YzE5ZDIxZDExMjcxNzFhIiwidGFnIjoiIn0%3D; expires=Wed, 04 Mar 2026 20:12:58 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Store a new comment for the task.'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer Bearer {YOUR_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      workspaceId:
+        custom: []
+        name: workspaceId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      projectId:
+        custom: []
+        name: projectId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      taskId:
+        custom: []
+        name: taskId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      workspaceId: consequatur
+      projectId: consequatur
+      taskId: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment:
+        custom: []
+        name: comment
+        description: 'Must be at least 1 character. Must not be greater than 2000 characters.'
+        required: true
+        example: vmqeopfuudtdsufvyvddq
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      comment: vmqeopfuudtdsufvyvddq
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/v1/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments/{commentId}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update an existing comment.'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer Bearer {YOUR_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      workspaceId:
+        custom: []
+        name: workspaceId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      projectId:
+        custom: []
+        name: projectId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      taskId:
+        custom: []
+        name: taskId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      commentId:
+        custom: []
+        name: commentId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      workspaceId: consequatur
+      projectId: consequatur
+      taskId: consequatur
+      commentId: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment:
+        custom: []
+        name: comment
+        description: 'Must be at least 1 character. Must not be greater than 2000 characters.'
+        required: true
+        example: vmqeopfuudtdsufvyvddq
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      comment: vmqeopfuudtdsufvyvddq
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/workspaces/{workspaceId}/projects/{projectId}/tasks/{taskId}/comments/{commentId}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete comment.'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer Bearer {YOUR_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      workspaceId:
+        custom: []
+        name: workspaceId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      projectId:
+        custom: []
+        name: projectId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      taskId:
+        custom: []
+        name: taskId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      commentId:
+        custom: []
+        name: commentId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      workspaceId: consequatur
+      projectId: consequatur
+      taskId: consequatur
+      commentId: consequatur
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
