@@ -94,7 +94,7 @@
                             <div class="item-card" style="cursor: pointer;">
                                 <h3>${project.name}</h3>
                                 <p style="margin-bottom: 1rem;">
-                                    <strong>${project.tasks ? project.tasks.length : 0}</strong> Task(s)
+                                    <strong>${project.tasks ? project.tasks.length : 0}</strong> Task
                                 </p>
                                 <div class="meta">
                                     Created: ${formatDate(project.created_at)}
