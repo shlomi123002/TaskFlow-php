@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/workspaces/{workspaceId}/edit', [WorkspaceWebController::class, 'edit'])->name('workspaces.edit');
     Route::put('/workspaces/{workspaceId}', [WorkspaceWebController::class, 'update'])->name('workspaces.update');
     Route::delete('/workspaces/{workspaceId}', [WorkspaceWebController::class, 'destroy'])->name('workspaces.destroy');
+    Route::get('/workspaces/{workspaceId}/share', [WorkspaceWebController::class, 'share'])->name('workspaces.share');
+    Route::post('/workspaces/{workspaceId}/share', [WorkspaceWebController::class, 'storeShare'])->name('workspaces.storeShare');
     
     // Project CRUD
     Route::get('/workspaces/{workspaceId}/projects/create', [ProjectWebController::class, 'create'])->name('projects.create');

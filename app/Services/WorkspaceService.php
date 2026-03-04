@@ -72,4 +72,32 @@ class WorkspaceService
             ->whereKey($workspaceId)
             ->firstOrFail();
     }
+
+    /**
+     * Share a workspace with other users
+     */
+    public function shareWorkspace(User $user, string $workspaceId, array $userIds): Workspace
+    {
+        $workspace = $user->workspaces()
+            ->whereKey($workspaceId)
+            ->firstOrFail();
+
+        // Attach users to the workspace (sync will add new and remove old ones if needed, but we use attach for add-only)
+        foreach ($userIds as $sharedUserId) {
+            $workspace->users()->syncWithoutDetaching([$sharedUserId]);
+        }
+
+        return $workspace;
+    }
+
+    /**
+     * Get all users available for sharing (excluding the current user)
+     */
+    public function getAvailableUsersForSharing(User $user): array
+    {
+        return User::where('id', '!=', $user->id)
+            ->orderBy('name')
+            ->get()
+            ->toArray();
+    }
 }

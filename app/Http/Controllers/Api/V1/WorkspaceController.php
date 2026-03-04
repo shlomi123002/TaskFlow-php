@@ -79,4 +79,45 @@ class WorkspaceController extends Controller
 
         return response()->json([], 204);
     }
+
+    /**
+     * POST /api/v1/workspaces/{workspaceId}/share
+     * Share workspace with multiple users
+     */
+    public function share(Request $request, string $workspaceId): JsonResponse
+    {
+        $validated = $request->validate([
+            'user_ids' => ['required', 'array'],
+            'user_ids.*' => ['required', 'string', 'exists:users,id'],
+        ]);
+
+        $workspace = $this->workspaceService->shareWorkspace(
+            $request->user(),
+            $workspaceId,
+            $validated['user_ids']
+        );
+
+        return response()->json([
+            'data' => [
+                'id' => (string) $workspace->id,
+                'name' => $workspace->name,
+                'created_at' => $workspace->created_at,
+                'updated_at' => $workspace->updated_at,
+            ],
+            'message' => 'Workspace shared successfully',
+        ], 200);
+    }
+
+    /**
+     * GET /api/v1/workspaces/available-users
+     * Get all users available for sharing
+     */
+    public function availableUsers(Request $request): JsonResponse
+    {
+        $users = $this->workspaceService->getAvailableUsersForSharing($request->user());
+
+        return response()->json([
+            'data' => $users,
+        ]);
+    }
 }

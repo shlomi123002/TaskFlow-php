@@ -75,4 +75,25 @@ class WorkspaceWebController extends Controller
             'projects' => []
         ]);
     }
+
+    public function share(Request $request, string $workspaceId)
+    {
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        $availableUsers = $this->workspaceService->getAvailableUsersForSharing($request->user());
+        $sharedUserIds = $workspace->users()->pluck('user_id')->toArray();
+
+        return view('workspaces.share', compact('workspace', 'availableUsers', 'sharedUserIds'));
+    }
+
+    public function storeShare(Request $request, string $workspaceId)
+    {
+        $validated = $request->validate([
+            'user_ids' => ['required', 'array'],
+            'user_ids.*' => ['required', 'string', 'exists:users,id'],
+        ]);
+
+        $this->workspaceService->shareWorkspace($request->user(), $workspaceId, $validated['user_ids']);
+
+        return redirect("/workspaces/{$workspaceId}")->with('success', 'Workspace shared successfully!');
+    }
 }

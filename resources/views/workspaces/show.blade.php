@@ -9,6 +9,8 @@
         <div style="display: flex; justify-content: flex-start; align-items: center; gap: 1rem; margin-bottom: 2rem;">
             <h1 style="margin: 0; padding: 0;">{{ $workspace->name }}</h1>
             
+            <a href="/workspaces/{{ $workspace->id }}/share" class="btn btn-secondary" style="text-decoration: none; display: inline-block; background: #28a745; color: white;">Share</a>
+            
             <a href="/workspaces/{{ $workspace->id }}/edit" class="btn btn-secondary" style="text-decoration: none; display: inline-block; background: #667eea; color: white;">Edit</a>
             
             <form method="POST" action="/workspaces/{{ $workspace->id }}" style="display: inline; margin: 0;">

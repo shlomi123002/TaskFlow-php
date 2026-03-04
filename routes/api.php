@@ -20,6 +20,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/workspaces', [WorkspaceController::class, 'store']);
         Route::put('/workspaces/{workspaceId}', [WorkspaceController::class, 'update']);
         Route::delete('/workspaces/{workspaceId}', [WorkspaceController::class, 'destroy']);
+        Route::post('/workspaces/{workspaceId}/share', [WorkspaceController::class, 'share']);
+        Route::get('/workspaces/available-users', [WorkspaceController::class, 'availableUsers']);
         // projects CRUD
         Route::get('/workspaces/{workspaceId}/projects', [ProjectController::class, 'index']);
         Route::get('/projects', [ProjectController::class, 'all']);
