@@ -23,7 +23,8 @@ class TaskController extends Controller
             $workspaceId,
             $projectId,
             $request->query('status'),
-            $request->query('priority')
+            $request->query('priority'),
+            $request->query('search')
         );
 
         return response()->json([
@@ -39,6 +40,7 @@ class TaskController extends Controller
             'description' => ['nullable', 'string', 'max:5000'],
             'status' => ['nullable', 'in:pending,completed'],
             'priority' => ['nullable', 'in:low,normal,high'],
+            'user_id' => ['required', 'exists:users,id'],
         ]);
 
         $task = $this->taskService->createTask($request->user(), $workspaceId, $projectId, $validated);
@@ -47,6 +49,7 @@ class TaskController extends Controller
             'data' => [
                 'id' => (string) $task->id,
                 'project_id' => (string) $task->project_id,
+                'user_id' => (string) $task->user_id,
                 'name' => $task->name,
                 'description' => $task->description,
                 'status' => $task->status,
@@ -64,6 +67,7 @@ class TaskController extends Controller
             'description' => ['nullable', 'string', 'max:5000'],
             'status' => ['required', 'in:pending,completed'],
             'priority' => ['required', 'in:low,normal,high'],
+            'user_id' => ['required', 'exists:users,id'],
         ]);
 
         $task = $this->taskService->updateTask($request->user(), $workspaceId, $projectId, $taskId, $validated);
@@ -72,6 +76,7 @@ class TaskController extends Controller
             'data' => [
                 'id' => (string) $task->id,
                 'project_id' => (string) $task->project_id,
+                'user_id' => (string) $task->user_id,
                 'name' => $task->name,
                 'description' => $task->description,
                 'status' => $task->status,

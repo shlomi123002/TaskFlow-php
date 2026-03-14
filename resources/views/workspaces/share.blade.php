@@ -63,9 +63,18 @@
             @if($workspace->users()->count() > 0)
                 <ul style="list-style: none; padding: 0; margin: 0;">
                     @foreach($workspace->users as $user)
-                        <li style="padding: 0.75rem; background: white; margin-bottom: 0.5rem; border: 1px solid #e0e0e0; border-radius: 3px;">
-                            <strong style="color: #333;">{{ $user->name }}</strong>
-                            <small style="color: #666;">({{ $user->email }})</small>
+                        <li style="padding: 0.75rem; background: white; margin-bottom: 0.5rem; border: 1px solid #e0e0e0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #333;">{{ $user->name }}</strong>
+                                <small style="color: #666;">({{ $user->email }})</small>
+                            </div>
+                            <form method="POST" action="/workspaces/{{ $workspace->id }}/users/{{ $user->id }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove this user from the workspace?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+                                    Delete
+                                </button>
+                            </form>
                         </li>
                     @endforeach
                 </ul>

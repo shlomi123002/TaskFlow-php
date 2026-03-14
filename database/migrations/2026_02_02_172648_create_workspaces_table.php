@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('workspaces', function (Blueprint $table) {
             $table->id();
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

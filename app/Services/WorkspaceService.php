@@ -27,6 +27,7 @@ class WorkspaceService
     {
         $workspace = Workspace::create([
             'name' => $data['name'],
+            'created_by' => $user->id,
         ]);
 
         // Attach the creator as a member
@@ -78,11 +79,14 @@ class WorkspaceService
      */
     public function shareWorkspace(User $user, string $workspaceId, array $userIds): Workspace
     {
-        $workspace = $user->workspaces()
-            ->whereKey($workspaceId)
-            ->firstOrFail();
+        $workspace = Workspace::findOrFail($workspaceId);
 
-        // Attach users to the workspace (sync will add new and remove old ones if needed, but we use attach for add-only)
+        // Authorize the user using the policy
+        if ($user->cannot('share', $workspace)) {
+            throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to share this workspace.');
+        }
+
+        // Attach users to the workspace
         foreach ($userIds as $sharedUserId) {
             $workspace->users()->syncWithoutDetaching([$sharedUserId]);
         }
@@ -99,5 +103,21 @@ class WorkspaceService
             ->orderBy('name')
             ->get()
             ->toArray();
+    }
+
+    /**
+     * Remove a user from a workspace
+     */
+    public function removeUserFromWorkspace(User $user, string $workspaceId, string $userId): void
+    {
+        $workspace = Workspace::findOrFail($workspaceId);
+
+        // Authorize the user using the policy
+        if ($user->cannot('removeUser', $workspace)) {
+            throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to remove users from this workspace.');
+        }
+
+        // Detach the user from the workspace
+        $workspace->users()->detach($userId);
     }
 }

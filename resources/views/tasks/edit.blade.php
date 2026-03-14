@@ -54,6 +54,26 @@
                 @enderror
             </div>
 
+            <div class="form-group">
+                <label for="user_id">Assign To</label>
+                <select 
+                    id="user_id" 
+                    name="user_id"
+                    style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 1rem;"
+                    required
+                >
+                    <option value="">-- Select a user --</option>
+                    @foreach($workspaceUsers as $u)
+                        <option value="{{ $u->id }}" {{ old('user_id', $task->user_id) == $u->id ? 'selected' : '' }}>
+                            {{ $u->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('user_id')
+                    <small style="color: #721c24;">{{ $message }}</small>
+                @enderror
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label for="status">Status</label>

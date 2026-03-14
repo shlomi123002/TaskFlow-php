@@ -172,6 +172,13 @@
                             descriptionHtml = `<p>${task.description.length > 80 ? task.description.substring(0, 80) + '...' : task.description}</p>`;
                         }
                         
+                        let userHtml = '';
+                        if (task.user && task.user.name) {
+                            userHtml = `<div style="margin-top: 0.5rem; font-size: 0.9rem; color: #667eea; font-weight: 500;">
+                                👤 ${task.user.name}
+                            </div>`;
+                        }
+                        
                         return `
                         <div class="item-card" style="${isCompleted ? 'opacity: 0.8;' : ''}">
                             <div style="margin-bottom: 0.5rem;">
@@ -179,6 +186,8 @@
                             </div>
 
                             ${descriptionHtml}
+                            
+                            ${userHtml}
 
                             <div style="margin-top: 1rem;">
                                 <span class="status-badge status-${task.status || 'pending'}">

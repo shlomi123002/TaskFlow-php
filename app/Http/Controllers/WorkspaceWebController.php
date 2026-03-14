@@ -96,4 +96,11 @@ class WorkspaceWebController extends Controller
 
         return redirect("/workspaces/{$workspaceId}")->with('success', 'Workspace shared successfully!');
     }
+
+    public function removeUser(Request $request, string $workspaceId, string $userId)
+    {
+        $this->workspaceService->removeUserFromWorkspace($request->user(), $workspaceId, $userId);
+
+        return redirect("/workspaces/{$workspaceId}/share")->with('success', 'User removed from workspace successfully!');
+    }
 }

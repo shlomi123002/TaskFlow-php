@@ -13,7 +13,7 @@ class TaskService
     {
     }
 
-    public function getTasksForProject(User $user, string $workspaceId, string $projectId, ?string $status = null, ?string $priority = null)
+    public function getTasksForProject(User $user, string $workspaceId, string $projectId, ?string $status = null, ?string $priority = null, ?string $search = null)
     {
         $workspace = $this->workspaceService->getWorkspaceForUser($user, $workspaceId);
 
@@ -21,7 +21,7 @@ class TaskService
             ->whereKey($projectId)
             ->firstOrFail();
 
-        $query = $project->tasks();
+        $query = $project->tasks()->with('user');
 
         if ($status) {
             $query->where('status', $status);
@@ -31,10 +31,11 @@ class TaskService
             $query->where('priority', $priority);
         }
 
-        return $query->orderBy('created_at', 'desc')
+        $tasks = $query->orderBy('created_at', 'desc')
             ->get([
                 'id',
                 'project_id',
+                'user_id',
                 'name',
                 'description',
                 'status',
@@ -42,6 +43,17 @@ class TaskService
                 'created_at',
                 'updated_at',
             ]);
+
+        if ($search) {
+            $search = strtolower($search);
+            $tasks = $tasks->filter(function ($task) use ($search) {
+                return stripos($task->name, $search) !== false || 
+                       stripos($task->description ?? '', $search) !== false;
+            });
+            $tasks = $tasks->values();
+        }
+
+        return $tasks;
     }
 
     public function createTask(User $user, string $workspaceId, string $projectId, array $data): Task
@@ -54,6 +66,7 @@ class TaskService
 
         $task = Task::create([
             'project_id' => $project->id,
+            'user_id' => $data['user_id'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'status' => $data['status'] ?? 'pending',

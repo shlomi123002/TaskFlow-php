@@ -66,9 +66,10 @@ class ProjectWebController extends Controller
         
         $status = $request->query('status');
         $priority = $request->query('priority');
+        $search = $request->query('search');
 
         if ($request->wantsJson()) {
-            $tasks = $this->taskService->getTasksForProject($request->user(), $workspaceId, $projectId, $status, $priority);
+            $tasks = $this->taskService->getTasksForProject($request->user(), $workspaceId, $projectId, $status, $priority, $search);
             return response()->json([
                 'project' => $project,
                 'workspace' => $workspace,
@@ -81,6 +82,7 @@ class ProjectWebController extends Controller
             'workspace' => $workspace,
             'status' => $status,
             'priority' => $priority,
+            'search' => $search,
             'tasks' => []
         ]);
     }

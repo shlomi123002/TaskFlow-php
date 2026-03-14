@@ -59,8 +59,9 @@ class TaskWebController extends Controller
     {
         $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);
         $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        $workspaceUsers = $workspace->users()->get();
         
-        return view('tasks.create', compact('project', 'workspace'));
+        return view('tasks.create', compact('project', 'workspace', 'workspaceUsers'));
     }
 
     public function store(Request $request, string $workspaceId, string $projectId)
@@ -70,7 +71,14 @@ class TaskWebController extends Controller
             'description' => ['nullable', 'string', 'max:5000'],
             'status' => ['nullable', 'in:pending,completed'],
             'priority' => ['nullable', 'in:low,normal,high'],
+            'user_id' => ['required', 'exists:workspace_user,user_id'],
         ]);
+
+        // Verify the selected user belongs to this workspace
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        if (!$workspace->users()->where('user_id', $validated['user_id'])->exists()) {
+            abort(403, 'The selected user does not belong to this workspace.');
+        }
 
         $this->taskService->createTask($request->user(), $workspaceId, $projectId, $validated);
 
@@ -82,8 +90,9 @@ class TaskWebController extends Controller
         $task = $this->taskService->getTaskForUser($request->user(), $workspaceId, $projectId, $taskId);
         $project = $this->projectService->getProjectForUser($request->user(), $workspaceId, $projectId);
         $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        $workspaceUsers = $workspace->users()->get();
         
-        return view('tasks.edit', compact('task', 'project', 'workspace'));
+        return view('tasks.edit', compact('task', 'project', 'workspace', 'workspaceUsers'));
     }
 
     public function update(Request $request, string $workspaceId, string $projectId, string $taskId)
@@ -93,7 +102,14 @@ class TaskWebController extends Controller
             'description' => ['nullable', 'string', 'max:5000'],
             'status' => ['required', 'in:pending,completed'],
             'priority' => ['required', 'in:low,normal,high'],
+            'user_id' => ['required', 'exists:workspace_user,user_id'],
         ]);
+
+        // Verify the selected user belongs to this workspace
+        $workspace = $this->workspaceService->getWorkspaceForUser($request->user(), $workspaceId);
+        if (!$workspace->users()->where('user_id', $validated['user_id'])->exists()) {
+            abort(403, 'The selected user does not belong to this workspace.');
+        }
 
         $this->taskService->updateTask($request->user(), $workspaceId, $projectId, $taskId, $validated);
 

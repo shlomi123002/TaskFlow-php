@@ -13,26 +13,15 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('project_id');
-
+            $table->foreignId('project_id')->references('id')->on('projects')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-
-            // סטטוס בסיסי (חלק א’): pending / completed
             $table->string('status')->default('pending');
-
-            // עדיפות בסיסית (לא חובה, אבל שימושי)
-            $table->string('priority')->default('normal'); // low/normal/high
-
+            $table->string('priority')->default('normal'); 
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('project_id')
-                ->references('id')
-                ->on('projects')
-                ->cascadeOnDelete();
-});
-
+        });
     }
 
     /**

@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('workspace_id');
+            $table->foreignId('workspace_id')->references('id')->on('workspaces')->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('workspace_id')
-                ->references('id')
-                ->on('workspaces')
-                ->cascadeOnDelete();
         });
 
     }

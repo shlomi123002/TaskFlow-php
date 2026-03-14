@@ -10,7 +10,7 @@ class Workspace extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'created_by'];
 
     public function users()
     {
@@ -25,6 +25,11 @@ class Workspace extends Model
     public function tasks()
     {
         return $this->hasManyThrough(Task::class, Project::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
 }

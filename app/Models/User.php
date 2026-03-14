@@ -57,4 +57,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Workspace::class, 'workspace_user')->withTimestamps();
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }
